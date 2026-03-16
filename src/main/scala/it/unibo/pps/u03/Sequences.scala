@@ -103,18 +103,23 @@ object Sequences: // Essentially, generic linkedlists
      * E.g., [10, 20, 30, 40] => [10, 30]
      */
     def evenIndices[A](s: Sequence[A]): Sequence[A] =
-        def _even(s: Sequence[A], count: Int): Sequence[A] = s match
-          case Cons(h, t) if count % 2 == 0 => Cons(h, _even(t, count = count + 1))
-          case Cons(_, t) => _even(t,  count = count + 1)
-          case Nil() => Nil()
-        _even(s, 0)
+        @tailrec
+        def _even(s: Sequence[A], count: Int, acc: Sequence[A]): Sequence[A] = s match
+          case Nil() => reverse(acc)
+          case Cons(h, t) if count % 2 == 0 => _even(t, count + 1, Cons(h, acc))
+          case Cons(_, t) => _even(t, count + 1, acc)
+        _even(s, 0, Nil())
 
     /*
      * Check if the sequence contains the element
      * E.g., [10, 20, 30] => true if elem is 20
      * E.g., [10, 20, 30] => false if elem is 40
      */
-    def contains[A](s: Sequence[A])(elem: A): Boolean = ???
+    @tailrec
+    def contains[A](s: Sequence[A])(elem: A): Boolean = s match
+      case Cons(h, t) if h == elem => true
+      case Cons(_, t) => contains(t)(elem)
+      case Nil() => false
 
     /*
      * Remove duplicates from the sequence
