@@ -68,9 +68,13 @@ object Sequences: // Essentially, generic linkedlists
      * E.g., [10] => [10]
      * E.g., [] => []
      */
-    def reverse[A](s: Sequence[A]): Sequence[A] = s match
-      case Cons(h, t) => concat(reverse(t), Cons(h, Nil()))
-      case _ => Nil()
+    def reverse[A](s: Sequence[A]): Sequence[A] =
+      @tailrec
+      def _reverse(rest: Sequence[A], acc: Sequence[A]): Sequence[A] =
+        rest match
+          case Nil() => acc
+          case Cons(h, t) => _reverse(t, Cons(h, acc))
+      _reverse(s, Nil())
 
     /*
      * Map the elements of the sequence to a new sequence and flatten the result
@@ -126,7 +130,13 @@ object Sequences: // Essentially, generic linkedlists
      * E.g., [10, 20, 10, 30] => [10, 20, 30]
      * E.g., [10, 20, 30] => [10, 20, 30]
      */
-    def distinct[A](s: Sequence[A]): Sequence[A] = ???
+    def distinct[A](s: Sequence[A]): Sequence[A] =
+      @tailrec
+      def _distinct(s: Sequence[A], acc: Sequence[A]): Sequence[A] = s match
+        case Nil() => reverse(acc)
+        case Cons(h, t) if !contains(acc)(h) => _distinct(t, Cons(h, acc))
+        case Cons(_, t) => _distinct(t, acc)
+      _distinct(s, Nil())
 
     /*
      * Group contiguous elements in the sequence
