@@ -22,25 +22,25 @@ class SequenceTest:
     assertEquals(Cons(20, Cons(30, Nil())), filter(sequence)(_ >= 20))
     assertEquals(Cons(10, Cons(30, Nil())), filter(sequence)(_ != 20))
 
-  @Test def testSkip() =
+  @Test def testSkip(): Unit =
     assertEquals(Cons(30, Nil()), skip(sequence)(2))
     assertEquals(Nil(), skip(sequence)(3))
     assertEquals(Cons(10, Cons(20, Cons(30, Nil()))), skip(sequence)(0))
     assertEquals(Nil(), skip(Nil())(2))
 
-  @Test def testZip() =
+  @Test def testZip(): Unit =
     val l2: Sequence[String] = Cons("10", Cons("20", Cons("30", Nil())))
     assertEquals(Cons((10, "10"), Cons((20, "20"), Cons((30, "30"), Nil()))), zip(sequence, l2))
     assertEquals(Nil(), zip(sequence, Nil()))
     assertEquals(Nil(), zip(Nil(), l2))
     assertEquals(Nil(), zip(Nil(), Nil()))
 
-  @Test def testConcat() =
+  @Test def testConcat(): Unit =
     val l2: Sequence[Int] = Cons(40, Cons(50, Nil()))
     assertEquals(Cons(10, Cons(20, Cons(30, Cons(40, Cons(50, Nil()))))), concat(sequence, l2))
     assertEquals(Cons(40, Cons(50, Nil())), concat(Nil(), l2))
 
-  @Test def testReverse() =
+  @Test def testReverse(): Unit =
     assertEquals(Cons(30, Cons(20, Cons(10, Nil()))), reverse(sequence))
     assertEquals(Nil(), reverse(Nil()))
 
