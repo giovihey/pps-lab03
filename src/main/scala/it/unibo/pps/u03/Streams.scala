@@ -1,5 +1,7 @@
 package u03
 
+import u03.Streams.Stream.takeWhile
+
 object Streams extends App :
 
   import Sequences.*
@@ -34,6 +36,10 @@ object Streams extends App :
       case (Cons(head, tail), n) if n > 0 => cons(head(), take(tail())(n - 1))
       case _ => Empty()
 
+    def takeWhile[A](stream: Stream[A])(pred: A => Boolean): Stream[A] = stream match
+      case Cons(head, tail) if pred(head()) => cons(head(), takeWhile(tail())(pred))
+      case _ => Empty()
+
     def iterate[A](init: => A)(next: A => A): Stream[A] =
       cons(init, iterate(next(init))(next))
 
@@ -50,3 +56,6 @@ object Streams extends App :
 
   lazy val corec: Stream[Int] = Stream.cons(1, corec) // {1,1,1,..}
   println(Stream.toList(Stream.take(corec)(10))) // [1,1,..,1]
+
+  val stream = Stream.iterate(0)(_ + 1)
+  println(Stream.toList(takeWhile(stream)(_ < 5))) // Cons (0 , Cons (1 , Cons (2 , Cons (3 , Cons (4 , Nil ())))))

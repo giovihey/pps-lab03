@@ -19,7 +19,7 @@ object Person:
     foldLeft(distinct(course(s)))(0)((acc, _) => acc + 1)
 
 
-@main def main(): Unit =
+@main def tryPerson(): Unit =
   val p : Sequence[Person] = Cons(Person.Student("mario", 2015), Cons(Person.Teacher("ma", "PPS"), Cons(Person.Teacher("ma", "PCD"), Nil())))
   println(Person.course(p))
   val list: Sequence[Person] = Cons(Teacher("Viroli", "PPS"), Cons(Teacher("Aguzzi", "PPS"), Cons(Teacher("Ricci", "PCD"), Nil())))
