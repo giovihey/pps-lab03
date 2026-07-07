@@ -144,7 +144,16 @@ object Sequences: // Essentially, generic linkedlists
      * E.g., [10, 20, 30] => [[10], [20], [30]]
      * E.g., [10, 20, 20, 30] => [[10], [20, 20], [30]]
      */
-    def group[A](s: Sequence[A]): Sequence[Sequence[A]] = ???
+    def group[A](s: Sequence[A]): Sequence[Sequence[A]] =
+      @tailrec
+      def _group(s: Sequence[A], current: Sequence[A], acc: Sequence[Sequence[A]]): Sequence[Sequence[A]] = s match
+        case Nil() =>
+          if current == Nil() then acc else Cons(current, acc)
+        case Cons(h, t) => current match
+          case Nil() => _group(t, Cons(h, Nil()), acc)
+          case Cons(ch, ct) if ch == h => _group(t, Cons(h, current), acc)
+          case _ => _group(s, Nil(), Cons(current, acc))
+      reverse(_group(s, Nil(), Nil()))
 
     /*
      * Partition the sequence into two sequences based on the predicate
