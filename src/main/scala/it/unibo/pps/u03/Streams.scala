@@ -1,6 +1,6 @@
 package u03
 
-import u03.Streams.Stream.takeWhile
+import u03.Streams.Stream.{cons, fib, takeWhile}
 
 object Streams extends App :
 
@@ -43,6 +43,13 @@ object Streams extends App :
     def iterate[A](init: => A)(next: A => A): Stream[A] =
       cons(init, iterate(next(init))(next))
 
+    def fill[A](n: Int)(k: A): Stream[A] = n match
+      case n if n > 0 => cons(k, fill(n - 1)(k))
+      case _ => Empty()
+
+    def fib(a: Int, b: Int): Stream[Int] =
+      cons(a, fib(b, a+b))
+
   end Stream
 
 @main def tryStreams =
@@ -59,3 +66,8 @@ object Streams extends App :
 
   val stream = Stream.iterate(0)(_ + 1)
   println(Stream.toList(takeWhile(stream)(_ < 5))) // Cons (0 , Cons (1 , Cons (2 , Cons (3 , Cons (4 , Nil ())))))
+   
+  println(Stream.toList(Stream.fill(3)("a"))) // Cons(a, Cons(a, Cons(a, Nil())))
+
+  val fibonacci: Stream[Int] = fib(0, 1)
+  println(Stream.toList(Stream.take(fibonacci)(5))) // Cons (0 , Cons (1 , Cons (1 , Cons (2 , Cons (3 , Nil ()))))
