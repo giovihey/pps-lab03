@@ -161,13 +161,25 @@ object Sequences: // Essentially, generic linkedlists
      * E.g., [11, 20, 31] => ([20], [11, 31]) if pred is (_ % 2 == 0)
      */
     def partition[A](s: Sequence[A])(pred: A => Boolean): (Sequence[A], Sequence[A]) =
-      @tailrec 
+      @tailrec
       def _partition(s: Sequence[A], matching: Sequence[A], notMatching: Sequence[A]): (Sequence[A], Sequence[A]) = s match
         case Nil() => (reverse(matching), reverse(notMatching))
         case Cons(h, t) =>
           if pred(h) then _partition(t, Cons(h, matching), notMatching)
           else _partition(t, matching, Cons(h, notMatching))
       _partition(s, Nil(), Nil())
+
+    /*
+     * Fold left: accumulate elements through a binary operator
+     * E.g., [3, 7, 1, 5], init=0, op=(+) => (((0 + 3) + 7) + 1) + 5 = 16
+     * E.g., [3, 7, 1, 5], init=1, op=(*) => (((1 * 3) * 7) * 1) * 5 = 105
+     */
+    def foldLeft[A, B](s: Sequence[A])(init: B)(op: (B, A) => B): B =
+      @tailrec
+      def _foldLeft(s: Sequence[A], acc: B): B = s match
+        case Cons(h, t) => _foldLeft(t, op(acc, h))
+        case Nil() => acc
+      _foldLeft(s, init)
 
 
 @main def trySequences =
@@ -178,3 +190,6 @@ object Sequences: // Essentially, generic linkedlists
   import Sequence.*
 
   println(sum(map(filter(l)(_ >= 20))(_ + 1))) // 21+31 = 52
+  val lst = Cons(3, Cons(7, Cons(1, Cons(5, Nil()))))
+  println(foldLeft(lst)(0)(_ - _)) // -16
+
