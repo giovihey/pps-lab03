@@ -1,5 +1,7 @@
 package u03
 
+import u03.Sequences.Sequence
+import u03.Sequences.Sequence.Cons
 import u03.Streams.Stream.{cons, fib, takeWhile}
 
 object Streams extends App :
@@ -59,6 +61,14 @@ object Streams extends App :
       case (_, Cons(head, tail)) => cons(head(), interleave(stream1, tail()))
       case _ => Empty()
 
+    def cycle[A](lst: Sequence[A]): Stream[A] = lst match
+      case Sequence.Nil() => Empty()
+      case _ =>
+        def loop(s: Sequence[A]): Stream[A] = s match
+          case Sequence.Cons(h, t) => cons(h, loop(t))
+          case Sequence.Nil() => loop(lst)
+        loop(lst)
+
   end Stream
 
 @main def tryStreams =
@@ -85,3 +95,7 @@ object Streams extends App :
   val s2 = Stream.fromList(List(2, 4, 6, 8, 10))
   println(Stream.toList(Stream.interleave(s1, s2)))
 // Expected output : Cons (1 , Cons (2 , Cons (3 , Cons (4 , Cons (5 , Cons (6 , Cons (8 , Cons (10 , Nil ()))))))))
+
+  val repeat = Stream.cycle(Cons("a", Cons("b", Cons("c", Sequence.Nil()))))
+  println(Stream.toList(Stream.take(repeat)(5)))
+// Expected output : Cons (a, Cons (b, Cons (c, Cons (a, Cons (b, Nil ())))))
