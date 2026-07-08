@@ -22,6 +22,10 @@ object Streams extends App :
     def toList[A](stream: Stream[A]): Sequence[A] = stream match
       case Cons(h, t) => Sequence.Cons(h(), toList(t()))
       case _ => Sequence.Nil()
+      
+    def fromList[A](list: List[A]): Stream[A] = list match
+      case h :: t => cons(h, fromList(t))
+      case _ => Empty()
 
     def map[A, B](stream: Stream[A])(f: A => B): Stream[B] = stream match
       case Cons(head, tail) => cons(f(head()), map(tail())(f))
@@ -50,6 +54,11 @@ object Streams extends App :
     def fib(a: Int, b: Int): Stream[Int] =
       cons(a, fib(b, a+b))
 
+    def interleave[A](stream1: Stream[A], stream2: Stream[A]): Stream[A] = (stream1, stream2) match
+      case (Cons(head, tail), _) => cons(head(), interleave(stream2, tail()))
+      case (_, Cons(head, tail)) => cons(head(), interleave(stream1, tail()))
+      case _ => Empty()
+
   end Stream
 
 @main def tryStreams =
@@ -71,3 +80,8 @@ object Streams extends App :
 
   val fibonacci: Stream[Int] = fib(0, 1)
   println(Stream.toList(Stream.take(fibonacci)(5))) // Cons (0 , Cons (1 , Cons (1 , Cons (2 , Cons (3 , Nil ()))))
+
+  val s1 = Stream.fromList(List(1, 3, 5))
+  val s2 = Stream.fromList(List(2, 4, 6, 8, 10))
+  println(Stream.toList(Stream.interleave(s1, s2)))
+// Expected output : Cons (1 , Cons (2 , Cons (3 , Cons (4 , Cons (5 , Cons (6 , Cons (8 , Cons (10 , Nil ()))))))))
